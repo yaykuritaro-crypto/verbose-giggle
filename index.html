@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
+    <meta charset="utf-8">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  </head>
-  <body>
+    <script src="https://cdn.jsdelivr.net/npm/osc-js@2.1.0/lib/osc.min.js"></script>
+</head>
+<body>
     <a-scene>
-      <a-assets>
-        <a-asset-item id="avatar" src="my_avatar.glb"></a-asset-item>
-      </a-assets>
+        <a-sky color="#111"></a-sky>
+        <a-grid color="#333"></a-grid>
 
-      <a-sky color="#87CEEB"></a-sky>
-      <a-grid></a-grid>
+        <a-sphere id="leftFoot" position="-0.5 0 -2" radius="0.1" color="cyan"></a-sphere>
+        <a-sphere id="rightFoot" position="0.5 0 -2" radius="0.1" color="magenta"></a-sphere>
 
-      <a-entity gltf-model="#avatar" position="0 0 -2" rotation="0 180 0"></a-entity>
-
-      <a-entity hand-tracking-controls="hand: left"></a-entity>
-      <a-entity hand-tracking-controls="hand: right"></a-entity>
-
-      <a-entity oculus-touch-controls="hand: left"></a-entity>
-      <a-entity oculus-touch-controls="hand: right"></a-entity>
-
-      <a-entity camera look-controls position="0 1.6 0"></a-entity>
+        <a-entity camera look-controls position="0 1.6 0"></a-entity>
     </a-scene>
-  </body>
+
+    <script>
+        // PCで動かしている bridge.js (ポート8080) に接続
+        // GitHub Pages(https)からローカル(ws)に繋ぐため、PCのIP指定が必要な場合があります
+        const osc = new OSC({ plugin: new OSC.WebsocketClientPlugin({ host: 'localhost', port: 8080 }) });
+
+        osc.on('*', message => {
+            console.log("データ受信:", message.address, message.args);
+            
+            // SlimeVRのデータ構造に合わせて座標を更新
+            // ※アドレスはSlimeVRの設定によりますが、代表的な例です
+            if (message.address === '/tracking/trackers/1/pos') {
+                const el = document.getElementById('leftFoot');
+                el.setAttribute('position', {x: message.args[0], y: message.args[1], z: message.args[2]});
+            }
+            if (message.address === '/tracking/trackers/2/pos') {
+                const el = document.getElementById('rightFoot');
+                el.setAttribute('position', {x: message.args[0], y: message.args[1], z: message.args[2]});
+            }
+        });
+
+        osc.open();
+    </script>
+</body>
 </html>
