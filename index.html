@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My First PCVR App</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   </head>
   <body>
-    <a-scene xr-mode-ui="enabled: true">
-      
-      <a-sky color="#ECECEC"></a-sky>
+    <a-scene>
+      <a-assets>
+        <a-asset-item id="avatar" src="my_avatar.glb"></a-asset-item>
+      </a-assets>
 
-      <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+      <a-sky color="#87CEEB"></a-sky>
+      <a-grid></a-grid>
 
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-entity gltf-model="#avatar" position="0 0 -2" rotation="0 180 0"></a-entity>
 
-      <a-entity laser-controls="hand: left"></a-entity>
-      <a-entity laser-controls="hand: right"></a-entity>
+      <a-entity hand-tracking-controls="hand: left"></a-entity>
+      <a-entity hand-tracking-controls="hand: right"></a-entity>
+
+      <a-entity oculus-touch-controls="hand: left"></a-entity>
+      <a-entity oculus-touch-controls="hand: right"></a-entity>
 
       <a-entity camera look-controls position="0 1.6 0"></a-entity>
-
     </a-scene>
   </body>
 </html>
